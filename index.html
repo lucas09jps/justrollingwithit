@@ -28,47 +28,28 @@
     <select id="muscle">
       <option value="Upper">Upper</option>
       <option value="Lower">Lower</option>
+      <option value="Core">Core</option>
       <option value="Full">Full</option>
+    </select>
+
+    <label>Materials:</label>
+    <select id="materials">
+      <option value="Yes">Yes</option>
+      <option value="No">No</option>
     </select>
   </div>
 
-  <button class="btn">
+  <button id="generateBtn" class="btn">
     <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
         <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
     </svg>
+	
 
     <span class="text">Generate</span>
 </button>
 
   <div id="workoutResult"></div>
 
-  <script>
-  async function getWorkout() {
-    const length = document.getElementById('length').value;
-    const intensity = document.getElementById('intensity').value;
-    const muscle = document.getElementById('muscle').value;
-
-    const response = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vSbwap5CoddTAU_DGfWBvpke_2qAasYAgGmlgWsn6gGe7K2GKX5NOzZjLHQdJknqfwgbPzBAgKUXXBx/pub?output=csv');
-    const data = await response.text();
-
-    const rows = data.split('\n').slice(1).map(r => r.split(','));
-
-    // Filter workouts based on user input
-    const matches = rows.filter(r => 
-      r[0] === length && r[1] === intensity && r[2] === muscle
-    );
-
-    if (matches.length === 0) {
-      document.getElementById('workoutResult').innerText = "No workouts found. Try different filters.";
-      return;
-    }
-
-    const random = matches[Math.floor(Math.random() * matches.length)];
-    document.getElementById('workoutResult').innerHTML =
-      `<strong>${random[3]}</strong><br>${random[4]}`;
-  }
-  </script>
+  <script src="script.js"></script>
 </body>
-</html>
-	</body>
 </html>

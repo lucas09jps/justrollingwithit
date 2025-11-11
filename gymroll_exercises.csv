@@ -1,0 +1,51 @@
+Muscle,Exercise,Intensity,Materials
+Upper,Knee Pushups,Easy,No
+Upper,Pushups,Medium,No
+Upper,Decline Pushups,Hard,No
+Upper,Shoulder Taps,Easy,No
+Upper,Pike Pushups,Hard,No
+Upper,Triceps Dips (Bench),Medium,Yes
+Upper,Diamond Pushups,Hard,No
+Upper,Arm Circles,Easy,No
+Upper,Inchworms,Easy,No
+Upper,Handstand Hold,Hard,No
+Upper,Wall Pushups,Easy,No
+Upper,Chest Flys (Dumbbells),Medium,Yes
+Upper,Shoulder Press (Dumbbells),Medium,Yes
+Upper,Front Raises (Bands),Medium,Yes
+Upper,Plank Up-Downs,Medium,No
+Lower,Bodyweight Squats,Easy,No
+Lower,Split Squats,Hard,Yes
+Lower,Lunges,Medium,No
+Lower,Jump Squats,Hard,No
+Lower,Glute Bridges,Easy,No
+Lower,Wall Sit,Easy,No
+Lower,Calf Raises,Easy,No
+Lower,Step-Ups,Medium,Yes
+Lower,Side Lunges,Medium,No
+Lower,Bulgarian Split Squats,Hard,Yes
+Lower,Sumo Squats,Medium,No
+Lower,Single-Leg Deadlifts,Hard,Yes
+Lower,Hip Thrusts,Medium,Yes
+Lower,Box Jumps,Hard,Yes
+Lower,Donkey Kicks,Easy,No
+Core,Plank,Easy,No
+Core,Sit-Ups,Easy,No
+Core,Leg Raises,Medium,No
+Core,Russian Twists,Medium,No
+Core,Mountain Climbers,Medium,No
+Core,V-Ups,Hard,No
+Core,Flutter Kicks,Medium,No
+Core,Hanging Leg Raises,Hard,Yes
+Core,Ab Wheel Rollouts,Hard,Yes
+Core,Side Plank,Medium,No
+Core,Bicycle Crunches,Medium,No
+Core,Toe Touches,Easy,No
+Core,Jackknife Sit-Ups,Hard,No
+Core,Seated Knee Tucks,Medium,No
+Core,Plank Shoulder Taps,Medium,No
+Full,Burpees,Hard,No
+Full,Jump Rope,Medium,Yes
+Full,High Knees,Easy,No
+Full,Mountain Climbers,Medium,No
+Full,Bear Crawls,Medium,No
