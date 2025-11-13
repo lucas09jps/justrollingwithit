@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8" />
   <title>GymRoll – Random Workout Generator</title>
   <link rel="stylesheet" href="style.css">
@@ -33,10 +34,12 @@
     </select>
 
     <label>Materials:</label>
-    <select id="materials">
-      <option value="Yes">Yes</option>
-      <option value="No">No</option>
-    </select>
+    <label class="switch">
+      <input type="checkbox" id="materialsSlider">
+      <span class="slider">
+       <svg class="slider-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation"><path fill="none" d="m4 16.5 8 8 16-16"></path></svg> 
+      </span>
+    </label>
   </div>
 
   <button id="generateBtn" class="btn">

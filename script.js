@@ -14,7 +14,8 @@ async function getWorkout() {
   const length = document.getElementById('length').value;
   const intensity = document.getElementById('intensity').value;
   const muscle = document.getElementById('muscle').value;
-  const materials = document.getElementById('materials') ? document.getElementById('materials').value : 'Yes';
+  const materialsSlider = document.getElementById('materialsSlider');
+  const materials = materialsSlider && materialsSlider.checked ? 'Yes' : 'No';
   // Try local CSV first (served with the app). Fallback to remote Sheets CSV if local not available.
   let data = null;
   try {

@@ -100,6 +100,79 @@ select:hover {
   fill: white;
   transform: scale(1.2);
 } 
+/* From Uiverse.io by alexruix */ 
+/* The switch - the box around the slider */
+.switch {
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+  margin: 10px;
+  vertical-align: middle;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #B0B0B0;
+  border: 1px solid #B0B0B0;
+  transition: .4s;
+  border-radius: 32px;
+  outline: none;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  outline: 2px solid #B0B0B0;
+  left: -1px;
+  bottom: -1px;
+  background-color: #fff;
+  transition: transform .25s ease-in-out 0s;
+}
+
+.slider-icon {
+  opacity: 0;
+  height: 12px;
+  width: 12px;
+  stroke-width: 8;
+  position: absolute;
+  z-index: 999;
+  stroke: #da0c0c;
+  right: 60%;
+  top: 30%;
+  transition: right ease-in-out .3s, opacity ease-in-out .15s;
+}
+
+input:checked + .slider {
+  background-color: #ff7733;
+}
+
+input:checked + .slider .slider-icon {
+  opacity: 1;
+  right: 20%;
+}
+
+input:checked + .slider:before {
+  transform: translateX(1.5em);
+  outline-color: #181818;
+}
 
 /* Workout Result Box */
 #workoutResult {
@@ -133,4 +206,93 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 30px 15px;
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 0.9rem;
+    margin-bottom: 30px;
+  }
+
+  /* Stack form controls vertically on mobile */
+  div > label {
+    display: block;
+    margin-bottom: 8px;
+    margin-top: 15px;
+    font-size: 0.95rem;
+  }
+
+  div > label:first-child {
+    margin-top: 0;
+  }
+
+  select {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 15px 0;
+    padding: 14px 18px;
+    font-size: 1rem;
+  }
+
+  .switch {
+    display: block;
+    margin: 0 auto 15px auto;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px 28px;
+    font-size: 1rem;
+    margin-top: 20px;
+  }
+
+  #workoutResult {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    margin-top: 30px;
+    font-size: 1rem;
+  }
+}
+
+/* Smaller mobile devices */
+@media screen and (max-width: 480px) {
+  body {
+    padding: 20px 10px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+
+  p {
+    font-size: 0.85rem;
+    margin-bottom: 25px;
+  }
+
+  select {
+    padding: 12px 16px;
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 14px 24px;
+    font-size: 0.95rem;
+  }
+
+  #workoutResult {
+    padding: 15px;
+    font-size: 0.95rem;
+  }
 }
