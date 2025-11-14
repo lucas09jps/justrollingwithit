@@ -296,3 +296,165 @@ footer a:hover {
     font-size: 0.95rem;
   }
 }
+
+/* Saved Link */
+.saved-link {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.2s;
+  z-index: 100;
+}
+
+.saved-link:hover {
+  background-color: var(--gray);
+  color: var(--accent-hover);
+}
+
+/* Save Button */
+.save-btn {
+  background: transparent;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-btn:hover:not(:disabled) {
+  background-color: var(--accent);
+  color: white;
+}
+
+.save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Saved Workouts Page */
+#savedWorkoutsList {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.saved-workout-card {
+  background-color: var(--gray);
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  text-align: left;
+}
+
+.workout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.workout-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.workout-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 0.95rem;
+  color: #aaa;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.workout-exercises {
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Clear All Button */
+.clear-all-btn:hover {
+  background: #cc0000 !important;
+}
+
+/* Error/Success Messages */
+.error-message, .success-message {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Mobile adjustments for saved page */
+@media screen and (max-width: 768px) {
+  .saved-link {
+    position: relative;
+    top: 0;
+    right: 0;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+  
+  .workout-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .workout-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .saved-workout-card {
+    padding: 20px;
+  }
+}

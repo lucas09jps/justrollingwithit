@@ -1,5 +1,9 @@
 document.getElementById("generateBtn").addEventListener("click", getWorkout);
 
+// Store current workout data globally
+let currentWorkoutData = null;
+let saveButtonListener = null;
+
 function pickRandomNoRepeat(arr, k) {
   const copy = arr.slice();
   const picked = [];
@@ -8,6 +12,132 @@ function pickRandomNoRepeat(arr, k) {
     picked.push(copy.splice(idx, 1)[0]);
   }
   return picked;
+}
+
+// Sanitize HTML to prevent XSS
+function sanitizeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// Check if localStorage is available
+function isLocalStorageAvailable() {
+  try {
+    const test = '__localStorage_test__';
+    localStorage.setItem(test, test);
+    localStorage.removeItem(test);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Check for duplicate workouts
+function isDuplicateWorkout(workout) {
+  if (!workout || !workout.exercises) return false;
+  const saved = getSavedWorkouts();
+  const workoutSignature = JSON.stringify(workout.exercises.map(e => e.title).sort());
+  
+  return saved.some(savedWorkout => {
+    const savedSignature = JSON.stringify(savedWorkout.exercises.map(e => e.title).sort());
+    return savedSignature === workoutSignature;
+  });
+}
+
+// Get saved workouts with error handling
+function getSavedWorkouts() {
+  if (!isLocalStorageAvailable()) return [];
+  try {
+    return JSON.parse(localStorage.getItem('gymroll_saved_workouts') || '[]');
+  } catch (e) {
+    console.error('Error reading saved workouts:', e);
+    return [];
+  }
+}
+
+// Save workout with error handling
+function saveWorkoutToStorage(workout) {
+  if (!isLocalStorageAvailable()) {
+    showError('Local storage is not available. Please check your browser settings.');
+    return false;
+  }
+  
+  try {
+    const savedWorkouts = getSavedWorkouts();
+    savedWorkouts.push(workout);
+    localStorage.setItem('gymroll_saved_workouts', JSON.stringify(savedWorkouts));
+    return true;
+  } catch (e) {
+    if (e.name === 'QuotaExceededError') {
+      showError('Storage limit reached. Please delete some saved workouts.');
+    } else {
+      showError('Failed to save workout: ' + e.message);
+    }
+    return false;
+  }
+}
+
+// Show error message
+function showError(message) {
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'error-message';
+  errorDiv.textContent = message;
+  errorDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #ff4444; color: white; padding: 15px 20px; border-radius: 8px; z-index: 10000; max-width: 90%;';
+  document.body.appendChild(errorDiv);
+  setTimeout(() => errorDiv.remove(), 5000);
+}
+
+// Custom prompt modal
+function showNamePrompt(defaultName, callback) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-overlay';
+  modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); z-index: 10000; display: flex; align-items: center; justify-content: center;';
+  
+  const modalContent = document.createElement('div');
+  modalContent.style.cssText = 'background: var(--gray); padding: 30px; border-radius: 12px; max-width: 90%; width: 400px;';
+  
+  const title = document.createElement('h3');
+  title.textContent = 'Save Workout';
+  title.style.cssText = 'margin: 0 0 15px 0; color: var(--accent);';
+  
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = defaultName;
+  input.style.cssText = 'width: 100%; padding: 12px; margin-bottom: 15px; background: var(--bg); color: var(--text); border: 2px solid var(--accent); border-radius: 8px; font-size: 1rem; box-sizing: border-box;';
+  input.select();
+  
+  const buttonContainer = document.createElement('div');
+  buttonContainer.style.cssText = 'display: flex; gap: 10px; justify-content: flex-end;';
+  
+  const cancelBtn = document.createElement('button');
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.style.cssText = 'padding: 10px 20px; background: transparent; color: var(--text); border: 2px solid var(--gray); border-radius: 8px; cursor: pointer;';
+  cancelBtn.onclick = () => modal.remove();
+  
+  const saveBtn = document.createElement('button');
+  saveBtn.textContent = 'Save';
+  saveBtn.style.cssText = 'padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;';
+  saveBtn.onclick = () => {
+    const name = input.value.trim() || defaultName;
+    modal.remove();
+    callback(name);
+  };
+  
+  input.onkeydown = (e) => {
+    if (e.key === 'Enter') saveBtn.click();
+    if (e.key === 'Escape') cancelBtn.click();
+  };
+  
+  buttonContainer.appendChild(cancelBtn);
+  buttonContainer.appendChild(saveBtn);
+  modalContent.appendChild(title);
+  modalContent.appendChild(input);
+  modalContent.appendChild(buttonContainer);
+  modal.appendChild(modalContent);
+  document.body.appendChild(modal);
+  
+  input.focus();
 }
 
 async function getWorkout() {
@@ -164,11 +294,117 @@ async function getWorkout() {
 
   plan = plan.sort(() => Math.random() - 0.5).slice(0, count);
 
+  // Store workout data for saving
+  currentWorkoutData = {
+    exercises: plan.map(r => ({
+      title: r[colExercise] || 'Exercise',
+      intensity: r[colIntensity] || '',
+      materials: r[colMaterials] || ''
+    })),
+    settings: {
+      length,
+      intensity,
+      muscle,
+      materials
+    },
+    date: new Date().toISOString()
+  };
+
   const outEl = document.getElementById('workoutResult');
-  outEl.innerHTML = plan.map(r => {
-    const title = r[colExercise] || 'Exercise';
-    const inten = r[colIntensity] || '';
-    const mats = r[colMaterials] || '';
+  const exercisesHtml = plan.map(r => {
+    const title = sanitizeHTML(r[colExercise] || 'Exercise');
+    const inten = sanitizeHTML(r[colIntensity] || '');
+    const mats = sanitizeHTML(r[colMaterials] || '');
     return `<div style="margin-bottom:12px"><strong>${title}</strong> <span style="color:#999;font-size:0.9rem">(${inten}${' Intensity'}${mats?', requires materials: ' + mats:''})</span></div>`;
   }).join('');
+  
+  const isDup = isDuplicateWorkout(currentWorkoutData);
+  
+  outEl.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="margin: 0; font-size: 1.3rem;">Your Workout</h2>
+      <button id="saveWorkoutBtn" class="save-btn" title="${isDup ? 'This workout is already saved' : 'Save workout'}" ${isDup ? 'disabled' : ''}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+      </button>
+    </div>
+    ${exercisesHtml}
+  `;
+
+  // Remove old listener if exists
+  const saveBtn = document.getElementById('saveWorkoutBtn');
+  if (saveButtonListener) {
+    saveBtn.removeEventListener('click', saveButtonListener);
+  }
+  
+  // Add new event listener
+  if (!isDup) {
+    saveButtonListener = handleSaveWorkout;
+    saveBtn.addEventListener('click', saveButtonListener);
+  }
+}
+
+function handleSaveWorkout() {
+  if (!currentWorkoutData) return;
+
+  // Generate default name
+  const defaultName = `${currentWorkoutData.settings.length} ${currentWorkoutData.settings.intensity} intensity for ${currentWorkoutData.settings.muscle} Groups`;
+  
+  // Check for duplicates
+  if (isDuplicateWorkout(currentWorkoutData)) {
+    showError('This workout is already saved!');
+    return;
+  }
+  
+  // Show custom prompt
+  showNamePrompt(defaultName, (workoutName) => {
+    // Get existing saved workouts
+    const savedWorkouts = getSavedWorkouts();
+    
+    // Add new workout
+    const workoutToSave = {
+      id: Date.now().toString(),
+      name: sanitizeHTML(workoutName.trim() || defaultName),
+      ...currentWorkoutData
+    };
+    
+    // Save to localStorage
+    if (saveWorkoutToStorage(workoutToSave)) {
+      // Show success message
+      const successDiv = document.createElement('div');
+      successDiv.className = 'success-message';
+      successDiv.textContent = `Workout "${workoutName}" saved successfully!`;
+      successDiv.style.cssText = 'position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #4CAF50; color: white; padding: 15px 20px; border-radius: 8px; z-index: 10000; max-width: 90%;';
+      document.body.appendChild(successDiv);
+      setTimeout(() => successDiv.remove(), 3000);
+      
+      // Update button to show it's saved
+      const saveBtn = document.getElementById('saveWorkoutBtn');
+      saveBtn.style.opacity = '0.6';
+      saveBtn.style.cursor = 'not-allowed';
+      saveBtn.disabled = true;
+      saveBtn.title = 'Workout saved!';
+    }
+  });
+}
+
+// Function to delete a saved workout
+function deleteWorkout(id) {
+  if (!isLocalStorageAvailable()) {
+    showError('Local storage is not available.');
+    return;
+  }
+  
+  try {
+    const savedWorkouts = getSavedWorkouts();
+    const filtered = savedWorkouts.filter(w => w.id !== id);
+    localStorage.setItem('gymroll_saved_workouts', JSON.stringify(filtered));
+    return true;
+  } catch (e) {
+    showError('Failed to delete workout: ' + e.message);
+    return false;
+  }
 }
