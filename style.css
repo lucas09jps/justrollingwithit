@@ -9,14 +9,14 @@
 
 /* ============================================================================
    CSS VARIABLES (Custom Properties)
-   ============================================================================
+   ===========================================================================
    Centralized color scheme for easy theming and consistency
    ============================================================================ */
 :root {
   --bg: #0f0f0f;           /* Dark background color */
   --text: #f5f5f5;          /* Light text color for contrast */
   --accent: #ff5a00;        /* Primary accent color (orange) */
-  --accent-hover: #ff7733;  /* Lighter orange for hover states */
+  --accent-hover: #fa6d27;  /* Lighter orange for hover states */
   --gray: #2b2b2b;          /* Gray for cards and secondary elements */
 }
 
