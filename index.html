@@ -16,42 +16,34 @@
   <a href="saved.html" class="saved-link">📋 Saved</a>
   
   <!-- Main page heading -->
-  <header class="site-header">
-    <div class="brand">
-      <img src="logo.png" alt="GymRoll" class="brand-logo">
-      <h1>GymRoll</h1>
-    </div>
-    <p class="lead">A new workout every time. No scrolling, no planning.</p>
-  </header>
+  <h1>🎯 GymRoll</h1>
+  <!-- Subtitle/description -->
+  <p>Get a random workout that fits your mood.</p>
 
   <!-- Form controls container for workout filters -->
-  <div class="layout">
-  <main class="panel">
-    <section class="controls">
-      <div class="control-row">
-        <div class="control-label">Length</div>
-        <div id="lengthPills" class="pills">
-          <button class="pill selected" data-value="Short">Short</button>
-          <button class="pill" data-value="Medium">Medium</button>
-          <button class="pill" data-value="Long">Long</button>
-        </div>
-      </div>
+  <div>
+    <!-- Length selector: Short, Medium, or Long workout -->
+    <label>Length:</label>
+    <select id="length">
+      <option value="Short">Short</option>
+      <option value="Medium">Medium</option>
+      <option value="Long">Long</option>
+    </select>
 
-      <div class="control-row">
-        <div class="control-label">Intensity</div>
-        <div id="intensityPills" class="pills">
-          <button class="pill" data-value="Easy">Easy</button>
-          <button class="pill selected" data-value="Medium">Medium</button>
-          <button class="pill" data-value="Hard">Hard</button>
-        </div>
-      </div>
+    <!-- Intensity selector: Easy, Medium, or Hard workout -->
+    <label>Intensity:</label>
+    <select id="intensity">
+      <option value="Easy">Easy</option>
+      <option value="Medium">Medium</option>
+      <option value="Hard">Hard</option>
+    </select>
 
-      <div class="control-row">
-        <div class="control-label">Muscle</div>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <div id="muscleSummaryWrap" class="summary-pill"> <span id="muscleSummary">Upper</span></div>
-          <div class="materials-container">
-            <button id="muscleToggle" class="materials-btn small">Choose</button>
+    <!-- Muscle group selector: opens a popup where user can choose macro or specific parts -->
+    <label>Muscle Group:</label>
+    <div class="materials-container">
+      <button id="muscleToggle" class="materials-btn">
+        Select Muscle • <span id="muscleSummary">Upper</span>
+      </button>
       <div id="muscleCard" class="materials-card" aria-hidden="true">
         <div class="materials-card-header">
           <h3>Select Muscle</h3>
@@ -101,85 +93,84 @@
         </div>
         <button id="muscleApply" class="materials-apply-btn">Done</button>
       </div>
-          </div>
-        </div>
-      </div>
+    </div>
 
-      <div class="control-row">
-        <div class="control-label">Materials</div>
-        <div style="display:flex;gap:12px;align-items:center;">
-          <div id="materialsSummaryWrap" class="summary-pill"><span id="materialsSummary">Bodyweight only</span></div>
-          <div class="materials-container">
-            <button id="materialsToggle" class="materials-btn small">Choose</button>
-            <div id="materialsCard" class="materials-card" aria-hidden="true">
-              <div class="materials-card-header">
-                <h3>Select Materials</h3>
-                <button id="materialsClose" class="materials-close" aria-label="Close materials card">&times;</button>
-              </div>
-              <p class="materials-helper">Check every type of equipment you have available.</p>
-              <div class="materials-grid">
-                <label class="material-option">
-                  <input type="checkbox" value="bodyweight" checked disabled>
-                  <span>Bodyweight</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="dumbbell">
-                  <span>Dumbbells</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="kettlebell">
-                  <span>Kettlebells</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="barbell">
-                  <span>Barbell</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="band">
-                  <span>Resistance Bands</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="machine">
-                  <span>Machines / Smith</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="bench">
-                  <span>Bench / Box</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="cable">
-                  <span>Cables / Pulleys</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="ball">
-                  <span>Med / Stability Balls</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="suspension">
-                  <span>Suspension / TRX</span>
-                </label>
-                <label class="material-option">
-                  <input type="checkbox" value="other">
-                  <span>Other Specialty Gear</span>
-                </label>
-              </div>
-              <button id="materialsApply" class="materials-apply-btn">Done</button>
-            </div>
-          </div>
+    <!-- Materials selector: opens a card where user checks available equipment -->
+    <label>Materials:</label>
+    <div class="materials-container">
+      <button id="materialsToggle" class="materials-btn">
+        Select Materials • <span id="materialsSummary">Bodyweight only</span>
+      </button>
+      <div id="materialsCard" class="materials-card" aria-hidden="true">
+        <div class="materials-card-header">
+          <h3>Select Materials</h3>
+          <button id="materialsClose" class="materials-close" aria-label="Close materials card">&times;</button>
         </div>
+        <p class="materials-helper">Check every type of equipment you have available.</p>
+        <div class="materials-grid">
+          <label class="material-option">
+            <input type="checkbox" value="bodyweight" checked disabled>
+            <span>Bodyweight</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="dumbbell">
+            <span>Dumbbells</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="kettlebell">
+            <span>Kettlebells</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="barbell">
+            <span>Barbell</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="band">
+            <span>Resistance Bands</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="machine">
+            <span>Machines / Smith</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="bench">
+            <span>Bench / Box</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="cable">
+            <span>Cables / Pulleys</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="ball">
+            <span>Med / Stability Balls</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="suspension">
+            <span>Suspension / TRX</span>
+          </label>
+          <label class="material-option">
+            <input type="checkbox" value="other">
+            <span>Other Specialty Gear</span>
+          </label>
+        </div>
+        <button id="materialsApply" class="materials-apply-btn">Done</button>
       </div>
+    </div>
+  </div>
 
-      <div style="margin-top:18px;">
-        <button id="generateBtn" class="generate-btn">Generate</button>
-      </div>
-    </section>
+  <!-- Generate button: Triggers workout generation when clicked -->
+  <button id="generateBtn" class="btn">
+    <!-- Sparkle/star icon SVG for visual appeal -->
+    <svg height="24" width="24" fill="#FFFFFF" viewBox="0 0 24 24" data-name="Layer 1" id="Layer_1" class="sparkle">
+        <path d="M10,21.236,6.755,14.745.264,11.5,6.755,8.255,10,1.764l3.245,6.491L19.736,11.5l-6.491,3.245ZM18,21l1.5,3L21,21l3-1.5L21,18l-1.5-3L18,18l-3,1.5ZM19.333,4.667,20.5,7l1.167-2.333L24,3.5,21.667,2.333,20.5,0,19.333,2.333,17,3.5Z"></path>
+    </svg>
+	
+    <!-- Button text label -->
+    <span class="text">Generate</span>
+</button>
 
   <!-- Container where the generated workout will be displayed -->
-  <div class="container">
-    <div id="workoutResult"></div>
-    <footer style="text-align:center;margin-top:22px;color:#8A8A8A;font-size:12px">© 2025 GymRoll</footer>
-  </div>
-  </div>
+  <div id="workoutResult"></div>
 
   <!-- External JavaScript file that handles all workout logic -->
   <script src="script.js"></script>

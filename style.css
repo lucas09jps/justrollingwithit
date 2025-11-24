@@ -5,23 +5,19 @@
    ============================================================================ */
 
 /* Import Google Fonts - Montserrat with multiple weights for typography */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
 
 /* ============================================================================
    CSS VARIABLES (Custom Properties)
    ============================================================================
    Centralized color scheme for easy theming and consistency
    ============================================================================ */
-:root{
-  --bg-1: #0D0D0D;
-  --bg-2: #151515;
-  --text: #F4F4F4;
-  --muted: #A0A0A0;
-  --muted-2: #C2C2C2;
-  --card: #121214;
-  --accent: #FF6A2D;
-  --accent-2: #FF8A50;
-  --glass: rgba(255,255,255,0.03);
+:root {
+  --bg: #0f0f0f;           /* Dark background color */
+  --text: #f5f5f5;          /* Light text color for contrast */
+  --accent: #ff5a00;        /* Primary accent color (orange) */
+  --accent-hover: #ff7733;  /* Lighter orange for hover states */
+  --gray: #2b2b2b;          /* Gray for cards and secondary elements */
 }
 
 /* ============================================================================
@@ -29,31 +25,19 @@
    ============================================================================ */
 
 /* Universal selector - applies to all elements */
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial}
-
-/* Body element - main page container */
-body{
-  background: linear-gradient(180deg,var(--bg-1),var(--bg-2));
-  color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
-  padding:28px 16px;
-  display:flex;
-  justify-content:center;
+* {
+  box-sizing: border-box;  /* Include padding and border in element width */
+  margin: 0;                /* Remove default margins */
+  padding: 0;              /* Remove default padding */
+  font-family: 'Montserrat', sans-serif;  /* Set default font */
 }
 
-/* subtle noise overlay */
-body::after{content:'';position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(transparent,transparent);opacity:0.02}
-
-.container{width:100%;max-width:1100px;padding:0 18px}
-
-/* Layout wrapper for responsive two-column layout on wide screens */
-.layout{width:100%;max-width:1100px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
-
-@media screen and (min-width: 900px) {
-  .layout{display:grid;grid-template-columns:420px 1fr;gap:28px;align-items:start}
-  .panel{max-width:420px;width:100%}
-  #workoutResult{margin-top:0}
+/* Body element - main page container */
+body {
+  background-color: var(--bg);  /* Use CSS variable for background */
+  color: var(--text);            /* Use CSS variable for text color */
+  text-align: center;            /* Center-align all content */
+  padding: 60px 20px;            /* Add padding for spacing */
 }
 
 /* ============================================================================
@@ -61,59 +45,60 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;background-ima
    ============================================================================ */
 
 /* Main page heading (h1) */
-/* Header / branding */
-.site-header{margin-bottom:28px;text-align:center}
-.brand{display:flex;align-items:center;gap:12px;justify-content:center}
-.brand-logo{width:46px;height:46px;object-fit:contain}
-.site-header h1{font-size:30px;font-weight:800;color:var(--text);letter-spacing:0.6px}
-.lead{color:var(--muted-2);font-size:15px;margin-top:6px}
+h1 {
+  font-size: 3rem;         /* Large font size for prominence */
+  letter-spacing: 1px;      /* Slight letter spacing for readability */
+  font-weight: 700;        /* Bold weight */
+  margin-bottom: 10px;     /* Space below heading */
+}
 
 /* Paragraph/subtitle text */
-/* Panel */
-.panel{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:16px;padding:22px;margin-bottom:26px;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
-
-.controls{display:flex;flex-direction:column;gap:18px}
-.control-row{display:flex;flex-direction:column;gap:8px}
-.control-label{font-size:14px;color:var(--muted);font-weight:600}
-.pills{display:flex;gap:10px}
-.pill{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:12px 14px;border-radius:22px;font-size:16px;cursor:pointer;transition:all 200ms ease}
-.pill.selected{background:var(--accent);color:white;box-shadow:0 8px 20px rgba(255,106,45,0.12);border:none}
-.pill:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.45)}
-
-.summary-pill{background:transparent;color:var(--muted);padding:10px 12px;border-radius:16px;border:1px solid rgba(255,255,255,0.03);display:inline-flex;align-items:center;gap:8px}
-
-.summary-pill.selected{background:var(--accent);color:white;box-shadow:0 8px 20px rgba(255,106,45,0.12);border:none}
-
-.materials-btn.small{padding:8px 12px;border-radius:14px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
-
-/* Generate Button */
-.generate-btn{width:100%;background:var(--accent);color:white;padding:14px 18px;border-radius:14px;border:none;font-weight:700;font-size:18px;cursor:pointer;transition:transform 180ms ease,box-shadow 180ms ease}
-.generate-btn:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,0.5)}
-.generate-btn:active{transform:scale(1.03)}
-
+p {
+  color: #aaa;             /* Lighter gray for secondary text */
+  font-size: 1rem;         /* Standard font size */
+  margin-bottom: 40px;     /* Space below paragraph */
+}
 
 /* ============================================================================
    FORM CONTROLS
    ============================================================================ */
 
-/* hide old selects (if any) */
-select{display:none}
+/* Select dropdown menus for workout filters */
+select {
+  background-color: var(--gray);  /* Dark gray background */
+  color: var(--text);             /* Light text color */
+  border: none;                   /* Remove default border */
+  padding: 12px 18px;            /* Internal spacing */
+  border-radius: 8px;            /* Rounded corners */
+  margin: 10px;                   /* Space around select */
+  font-size: 1rem;               /* Standard font size */
+  cursor: pointer;                /* Pointer cursor on hover */
+  transition: 0.2s;              /* Smooth transition for hover */
+}
+
+/* Hover state for select dropdowns */
+select:hover {
+  background-color: #3a3a3a;  /* Lighter gray on hover */
+}
 
 /* ============================================================================
    BUTTONS
    ============================================================================ */
 
-/* Result card */
-#workoutResult{margin-top:24px}
-#workoutResult{background-color:transparent;padding:0;margin-top:0}
-.result-card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.4);animation:fadeUp 320ms ease both}
-.result-card h2{margin:0 0 8px 0;color:var(--accent);font-size:18px}
-.result-card .meta{color:var(--muted);font-size:14px;margin-bottom:12px}
-.exercise-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-top:1px solid rgba(255,255,255,0.02)}
-.exercise-row:first-of-type{border-top:0;padding-top:0}
-.exercise-row strong{color:var(--accent);font-weight:700}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* Main Generate button */
+.btn {
+  background-color: var(--accent);  /* Orange accent color */
+  color: white;                      /* White text */
+  font-weight: 600;                 /* Semi-bold text */
+  border: none;                     /* No border */
+  border-radius: 10px;              /* Rounded corners */
+  padding: 14px 28px;               /* Internal spacing */
+  margin-top: 20px;                 /* Space above button */
+  font-size: 1rem;                  /* Standard font size */
+  letter-spacing: 0.5px;            /* Slight letter spacing */
+  cursor: pointer;                   /* Pointer cursor */
+  transition: all 450ms ease-in-out; /* Smooth transitions */
+}
 
 /* Sparkle/star icon inside button */
 .sparkle {
@@ -155,32 +140,27 @@ select{display:none}
    Interactive card where users select available equipment
    ============================================================================ */
 .materials-container {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-block;
   position: relative;
-  margin: 8px 0 12px;
+  margin: 10px 0 20px;
 }
 
 .materials-btn {
   background: transparent;
-  border: 2px solid rgba(255,255,255,0.04);
-  color: var(--muted);
-  padding: 8px 12px;
-  border-radius: 18px;
+  border: 2px solid var(--accent);
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 10px;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.2s ease;
 }
 
 .materials-btn:hover,
 .materials-btn:focus {
-  background-color: rgba(255, 90, 0, 0.06);
-  color: white;
+  background-color: rgba(255, 90, 0, 0.08);
   outline: none;
 }
-
-.materials-btn.small { padding: 8px 12px; border-radius: 14px; }
 
 .materials-card {
   /* Use fixed positioning so the card appears as an overlay popup
@@ -258,6 +238,53 @@ select{display:none}
   cursor: pointer;
 }
 
+/* Exercise info button and modal styles */
+.exercise-info {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255,90,0,0.10), rgba(255,90,0,0.06));
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 6px;
+  color: var(--accent);
+}
+.exercise-info svg { width:18px; height:18px; display:block; color:var(--accent); }
+.exercise-info:hover { transform: translateY(-3px); }
+
+.exercise-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 2000;
+  overflow-y: auto;
+}
+.exercise-card {
+  background: var(--gray);
+  padding: 20px;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 640px;
+  color: var(--text);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+.exercise-card h2 { margin: 0 0 10px 0; color: var(--accent); }
+.exercise-card .meta { color: #ddd; font-size: 0.95rem; margin-bottom: 12px; }
+.exercise-card .instructions { color: #eee; margin-bottom: 14px; line-height: 1.5; text-align: left; }
+.exercise-card img { width: 100%; height: auto; max-height: 340px; object-fit: contain; border-radius: 8px; background: #fff; }
+.exercise-card .close-btn { background: transparent; border: none; color: var(--text); font-size: 1.4rem; position: absolute; right: 18px; top: 12px; cursor: pointer; }
+.exercise-modal-fixed-close { position: fixed; top: 16px; right: 16px; z-index: 2100; background: rgba(0,0,0,0.5); color: var(--text); border: none; width: 44px; height: 44px; border-radius: 10px; font-size: 20px; cursor: pointer; display:flex;align-items:center;justify-content:center }
+
+
 .material-option input {
   accent-color: var(--accent);
 }
@@ -294,109 +321,6 @@ select{display:none}
   width: 80%;                     /* 80% of parent width */
   max-width: 500px;               /* Maximum width constraint */
 }
-
-/* Exercise info button */
-.exercise-info {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(255, 123, 0, 0.491), rgba(255,90,0,0.06));
-  border: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 -2px 0 rgba(0,0,0,0.06);
-  transition: transform 180ms ease, box-shadow 180ms ease;
-  padding: 4px;
-}
-.exercise-info img {
-  width: 22px;
-  height: 22px;
-  display: block;
-  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.15));
-}
-.exercise-info:hover {
-  transform: translateY(-3px) scale(1.03);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.55), inset 0 -2px 0 rgba(0,0,0,0.08);
-}
-
-/* Modal for exercise details */
-.exercise-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  z-index: 1200;
-  overflow-y: auto; /* allow scrolling when card is taller than viewport */
-}
-
-.exercise-card {
-  background: var(--gray);
-  padding: 24px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 560px;
-  color: var(--text);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  max-height: calc(100vh - 120px); /* keep modal within viewport */
-  overflow-y: auto; /* scroll internally if needed */
-}
-.exercise-card h2 {
-  margin: 0 0 12px 0;
-  color: var(--accent);
-}
-.exercise-card .instructions {
-  color: #e6e6e6;
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-.exercise-card img {
-  width: 100%;
-  max-height: 260px;
-  object-fit: contain;
-  border-radius: 8px;
-  background: #fff;
-  display: block;
-}
-.exercise-card .meta {
-  color: #aaa;
-  font-size: 0.95rem;
-  margin-bottom: 12px;
-}
-.exercise-card .close-btn {
-  background: transparent;
-  border: none;
-  color: var(--text);
-  font-size: 1.4rem;
-  position: absolute;
-  right: 20px;
-  top: 18px;
-  cursor: pointer;
-}
-
-/* Fixed close button visible regardless of card scroll */
-.exercise-modal-fixed-close {
-  position: fixed;
-  top: 18px;
-  right: 18px;
-  z-index: 1300;
-  background: rgba(0,0,0,0.45);
-  color: var(--text);
-  border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.exercise-modal-fixed-close:hover { transform: translateY(-2px); }
 
 /* Strong/bold text for exercise names */
 strong {
@@ -487,22 +411,22 @@ footer a:hover {
   }
 
   /* Full-width button on mobile */
-  .generate-btn, .btn {
+  .btn {
     width: 100%;          /* Full width */
     max-width: 100%;     /* No max width */
-    padding: 14px 18px;  /* Comfortable padding for touch */
+    padding: 16px 28px;  /* More padding for touch */
     font-size: 1rem;     /* Standard font */
-    margin-top: 12px;    /* Space above */
+    margin-top: 20px;    /* Space above */
   }
 
   /* Full-width workout result on mobile */
-    #workoutResult {
-      width: 100%;         /* Full width */
-      max-width: 100%;     /* No max width */
-      padding: 12px 0;     /* Slight padding - inner card provides padding */
-      margin-top: 18px;    /* Slight top margin */
-      font-size: 1rem;     /* Standard font size */
-    }
+  #workoutResult {
+    width: 100%;         /* Full width */
+    max-width: 100%;     /* No max width */
+    padding: 20px;       /* Slightly less padding */
+    margin-top: 30px;    /* Less top margin */
+    font-size: 1rem;     /* Standard font size */
+  }
 }
 
 /* ============================================================================
@@ -560,19 +484,17 @@ footer a:hover {
 
 /* Navigation link to saved workouts page (top right) */
 .saved-link {
-  position: fixed;      /* Fixed so it's always accessible */
-  top: 18px;              /* 18px from top */
-  right: 18px;            /* 18px from right */
+  position: absolute;      /* Absolute positioning */
+  top: 20px;              /* 20px from top */
+  right: 20px;            /* 20px from right */
   color: var(--accent);    /* Orange color */
   text-decoration: none;   /* No underline */
   font-weight: 600;       /* Semi-bold */
   font-size: 1rem;        /* Standard font size */
-  padding: 8px 12px;      /* Internal spacing */
+  padding: 8px 16px;      /* Internal spacing */
   border-radius: 8px;     /* Rounded corners */
-  transition: all 0.12s;    /* Smooth transitions */
-  z-index: 1400;           /* Above other content */
-  background: rgba(0,0,0,0.24);
-  backdrop-filter: blur(6px);
+  transition: all 0.2s;    /* Smooth transitions */
+  z-index: 100;           /* Above other content */
 }
 
 /* Hover effect for saved link */

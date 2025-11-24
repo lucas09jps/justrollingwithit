@@ -197,9 +197,9 @@ function initializeMaterialsSelector() {
     }
   });
 
-  // Close button closes; apply button should update state then close
-  if (closeBtn) closeBtn.addEventListener('click', closeCard);
-  if (applyBtn) applyBtn.addEventListener('click', () => { updateSelectedMaterialsState(); closeCard(); });
+  [closeBtn, applyBtn].forEach(btn => {
+    if (btn) btn.addEventListener('click', closeCard);
+  });
 
   document.addEventListener('click', event => {
     if (!card.contains(event.target) && !toggleBtn.contains(event.target) && card.classList.contains('open')) {
@@ -214,13 +214,6 @@ function initializeMaterialsSelector() {
       selectedMaterials.add('bodyweight');
     }
     summaryEl.textContent = getSelectedMaterialsSummary();
-    // Highlight the materials summary pill when user has selected any non-default option
-    const wrap = document.getElementById('materialsSummaryWrap');
-    if (wrap) {
-      // If only bodyweight is selected, consider it unselected appearance
-      const onlyBodyweight = selectedMaterials.size === 1 && selectedMaterials.has('bodyweight');
-      if (!onlyBodyweight) wrap.classList.add('selected'); else wrap.classList.remove('selected');
-    }
   };
 
   inputs.forEach(input => {
@@ -269,17 +262,7 @@ function initializeMuscleSelector() {
   toggleBtn.addEventListener('click', () => { card.classList.contains('open') ? closeCard() : openCard(); });
   if (closeBtn) closeBtn.addEventListener('click', closeCard);
 
-  if (applyBtn) applyBtn.addEventListener('click', () => {
-    summaryEl.textContent = getSelectedMuscleSummary();
-    // Toggle visual selected state on the muscle summary pill
-    const mwrap = document.getElementById('muscleSummaryWrap');
-    if (mwrap) {
-      const isSpecificEmpty = (muscleSelection.mode === 'specific' && (!muscleSelection.specifics || muscleSelection.specifics.size === 0));
-      const isMacroFull = (muscleSelection.mode === 'macro' && (muscleSelection.macro === 'Full' || !muscleSelection.macro));
-      if (!isSpecificEmpty && !isMacroFull) mwrap.classList.add('selected'); else mwrap.classList.remove('selected');
-    }
-    closeCard();
-  });
+  if (applyBtn) applyBtn.addEventListener('click', () => { summaryEl.textContent = getSelectedMuscleSummary(); closeCard(); });
 
   document.addEventListener('click', event => {
     if (!card.contains(event.target) && !toggleBtn.contains(event.target) && card.classList.contains('open')) closeCard();
@@ -483,11 +466,9 @@ function showNamePrompt(defaultName, callback) {
  * Fetches exercise data from JSON, filters by criteria, and displays results
  */
 async function getWorkout() {
-  // Get user-selected preferences from pill controls
-  const lengthEl = document.querySelector('#lengthPills .pill.selected');
-  const intensityEl = document.querySelector('#intensityPills .pill.selected');
-  const length = (lengthEl && lengthEl.dataset.value) ? lengthEl.dataset.value : 'Medium';
-  const intensity = (intensityEl && intensityEl.dataset.value) ? intensityEl.dataset.value : 'Medium';
+  // Get user-selected preferences from form controls
+  const length = document.getElementById('length').value;
+  const intensity = document.getElementById('intensity').value;
   const muscleChoice = getSelectedMuscle(); // could be macro string or Set of specifics
   const selectedMaterialsSet = getSelectedMaterials();
   const materialsSummary = getSelectedMaterialsSummary();
@@ -517,6 +498,12 @@ async function getWorkout() {
     .map(item => {
       const displayName = item.name || item.exercise || item.title || 'Exercise';
       const equipmentLabel = (item.equipment || 'Body weight').toString().trim();
+      // Gather secondary muscles field if present in dataset (various possible keys)
+      let secondary = [];
+      if (Array.isArray(item.secondary_muscles)) secondary = item.secondary_muscles.slice();
+      else if (Array.isArray(item.secondary)) secondary = item.secondary.slice();
+      else if (item.secondary_muscles && typeof item.secondary_muscles === 'string') secondary = [item.secondary_muscles];
+      else if (item.secondary && typeof item.secondary === 'string') secondary = [item.secondary];
       return {
         displayName,
         macroNormalized: normalizeText(item.macro_bodypart),
@@ -524,7 +511,8 @@ async function getWorkout() {
         equipmentLabel,
         intensityLabel: inferIntensityFromEquipment(item.equipment),
         gif: item.gif || '',
-        instructions: Array.isArray(item.instructions) ? item.instructions : []
+        instructions: Array.isArray(item.instructions) ? item.instructions : [],
+        secondary
       };
     });
 
@@ -635,11 +623,12 @@ async function getWorkout() {
     if (r.intensityLabel) metaParts.push(`${r.intensityLabel} Intensity`);
     if (r.equipmentLabel) metaParts.push(`Equipment: ${r.equipmentLabel}`);
     const metaText = metaParts.length ? metaParts.join(' • ') : 'Details coming soon';
-    // Store extra metadata as encoded JSON in data attributes
     const dataInstructions = encodeURIComponent(JSON.stringify(r.instructions || []));
     const dataTarget = encodeURIComponent(r.macroNormalized || r.bodypartNormalized || '');
     const dataGif = encodeURIComponent(r.gif || '');
+    const dataSecondary = encodeURIComponent(JSON.stringify(r.secondary || []));
     const safeName = sanitizeHTML(r.displayName);
+    const infoSvg = `<svg viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm.75 15.5h-1.5V11h1.5v6.5zM12 8.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>`;
     return `
       <div class="exercise-row" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
         <div style="text-align:left; max-width:80%;">
@@ -651,24 +640,27 @@ async function getWorkout() {
           data-instructions="${dataInstructions}"
           data-target="${dataTarget}"
           data-gif="${dataGif}"
+          data-secondary="${dataSecondary}"
           type="button">
-          <img src="https://img.icons8.com/?size=100&id=P7N90lIvNYPd&format=png&color=FD7E14" alt="info">
+          ${infoSvg}
         </button>
       </div>`;
   }).join('');
   
   const isDup = isDuplicateWorkout(currentWorkoutData);
-
+  
   outEl.innerHTML = `
-    <div class="result-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <h2>Your Workout</h2>
-        <button id="saveWorkoutBtn" class="save-btn" title="${isDup ? 'This workout is already saved' : 'Save workout'}" ${isDup ? 'disabled' : ''}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h14l2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM12 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm5-11H7V6h10v2z" fill="currentColor"/></svg>
-        </button>
-      </div>
-      ${exercisesHtml}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h2 style="margin: 0; font-size: 1.3rem;">Your Workout</h2>
+      <button id="saveWorkoutBtn" class="save-btn" title="${isDup ? 'This workout is already saved' : 'Save workout'}" ${isDup ? 'disabled' : ''}>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+          <polyline points="17 21 17 13 7 13 7 21"></polyline>
+          <polyline points="7 3 7 8 15 8"></polyline>
+        </svg>
+      </button>
     </div>
+    ${exercisesHtml}
   `;
 
   const saveBtn = document.getElementById('saveWorkoutBtn');
@@ -680,93 +672,98 @@ async function getWorkout() {
     saveButtonListener = handleSaveWorkout;
     saveBtn.addEventListener('click', saveButtonListener);
   }
-}
 
-// Delegate click for exercise info buttons to show a modal with details
-document.addEventListener('click', function (e) {
-  const infoBtn = e.target.closest && e.target.closest('.exercise-info');
-  if (!infoBtn) return;
+  // Delegate click for exercise info buttons to show a modal with details
+  document.addEventListener('click', function (e) {
+    const infoBtn = e.target.closest && e.target.closest('.exercise-info');
+    if (!infoBtn) return;
 
-  // Remove existing modal if present
-  const existing = document.querySelector('.exercise-modal-overlay');
-  if (existing) existing.remove();
+    // Remove existing modal if present
+    const existing = document.querySelector('.exercise-modal-overlay');
+    if (existing) existing.remove();
 
-  const name = infoBtn.getAttribute('data-name') || '';
-  const instructionsJson = decodeURIComponent(infoBtn.getAttribute('data-instructions') || '%5B%5D');
-  let instructions = [];
-  try { instructions = JSON.parse(instructionsJson); } catch (err) { instructions = []; }
-  const target = decodeURIComponent(infoBtn.getAttribute('data-target') || '');
-  const gif = decodeURIComponent(infoBtn.getAttribute('data-gif') || '');
+    const name = infoBtn.getAttribute('data-name') || '';
+    const instructionsJson = decodeURIComponent(infoBtn.getAttribute('data-instructions') || '%5B%5D');
+    let instructions = [];
+    try { instructions = JSON.parse(instructionsJson); } catch (err) { instructions = []; }
+    const target = decodeURIComponent(infoBtn.getAttribute('data-target') || '');
+    const gif = decodeURIComponent(infoBtn.getAttribute('data-gif') || '');
+    const secondaryJson = decodeURIComponent(infoBtn.getAttribute('data-secondary') || '%5B%5D');
+    let secondary = [];
+    try { secondary = JSON.parse(secondaryJson); } catch (err) { secondary = []; }
 
-  // Build modal elements
-  const overlay = document.createElement('div');
-  overlay.className = 'exercise-modal-overlay';
+    // Build modal elements
+    const overlay = document.createElement('div');
+    overlay.className = 'exercise-modal-overlay';
 
-  const card = document.createElement('div');
-  card.className = 'exercise-card';
-  card.style.position = 'relative';
+    const card = document.createElement('div');
+    card.className = 'exercise-card';
+    card.style.position = 'relative';
 
-  const closeBtn = document.createElement('button');
-  closeBtn.className = 'close-btn';
-  closeBtn.innerHTML = '&times;';
-  closeBtn.onclick = () => overlay.remove();
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-btn';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.onclick = () => overlay.remove();
 
-  const title = document.createElement('h2');
-  title.innerHTML = sanitizeHTML(name);
+    const title = document.createElement('h2');
+    title.innerHTML = sanitizeHTML(name);
 
-  const meta = document.createElement('div');
-  meta.className = 'meta';
-  meta.textContent = target ? `Target: ${target}` : '';
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    const metas = [];
+    if (target) metas.push(`Target: ${sanitizeHTML(target)}`);
+    if (secondary && secondary.length) metas.push(`Secondary: ${sanitizeHTML(secondary.join(', '))}`);
+    meta.textContent = metas.join(' • ');
 
-  const instrDiv = document.createElement('div');
-  instrDiv.className = 'instructions';
-  if (Array.isArray(instructions) && instructions.length) {
-    const ol = document.createElement('ol');
-    instructions.forEach(step => {
-      const li = document.createElement('li');
-      li.innerHTML = sanitizeHTML((step || '').toString());
-      ol.appendChild(li);
-    });
-    instrDiv.appendChild(ol);
-  } else {
-    instrDiv.textContent = 'No instructions available.';
-  }
-
-  card.appendChild(closeBtn);
-  card.appendChild(title);
-  card.appendChild(meta);
-  card.appendChild(instrDiv);
-
-  if (gif) {
-    const img = document.createElement('img');
-    img.src = gif;
-    img.alt = name + ' demonstration';
-    card.appendChild(img);
-  }
-
-  overlay.appendChild(card);
-  // Add a fixed close button so the user can always close the modal even if
-  // the card content is taller than the viewport and scrolled.
-  const fixedClose = document.createElement('button');
-  fixedClose.className = 'exercise-modal-fixed-close';
-  fixedClose.innerHTML = '&times;';
-  fixedClose.onclick = () => overlay.remove();
-  document.body.appendChild(fixedClose);
-
-  overlay.addEventListener('click', (ev) => {
-    if (ev.target === overlay) overlay.remove();
-  });
-
-  document.body.appendChild(overlay);
-  // ensure fixed close button is removed when overlay is removed
-  const observer = new MutationObserver(() => {
-    if (!document.body.contains(overlay)) {
-      if (fixedClose && fixedClose.parentNode) fixedClose.remove();
-      observer.disconnect();
+    const instrDiv = document.createElement('div');
+    instrDiv.className = 'instructions';
+    if (Array.isArray(instructions) && instructions.length) {
+      const ol = document.createElement('ol');
+      instructions.forEach(step => {
+        const li = document.createElement('li');
+        li.innerHTML = sanitizeHTML((step || '').toString());
+        ol.appendChild(li);
+      });
+      instrDiv.appendChild(ol);
+    } else {
+      instrDiv.textContent = 'No instructions available.';
     }
+
+    card.appendChild(closeBtn);
+    card.appendChild(title);
+    card.appendChild(meta);
+    card.appendChild(instrDiv);
+
+    if (gif) {
+      const img = document.createElement('img');
+      img.src = gif;
+      img.alt = name + ' demonstration';
+      card.appendChild(img);
+    }
+
+    overlay.appendChild(card);
+    // Add a fixed close button so the user can always close the modal
+    const fixedClose = document.createElement('button');
+    fixedClose.className = 'exercise-modal-fixed-close';
+    fixedClose.innerHTML = '&times;';
+    fixedClose.onclick = () => overlay.remove();
+    document.body.appendChild(fixedClose);
+
+    overlay.addEventListener('click', (ev) => {
+      if (ev.target === overlay) overlay.remove();
+    });
+
+    document.body.appendChild(overlay);
+    // ensure fixed close button is removed when overlay is removed
+    const observer = new MutationObserver(() => {
+      if (!document.body.contains(overlay)) {
+        if (fixedClose && fixedClose.parentNode) fixedClose.remove();
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, { childList: true });
   });
-  observer.observe(document.body, { childList: true });
-});
+}
 
 /**
  * Handles the save workout button click
