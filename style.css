@@ -492,16 +492,16 @@ select:hover {
 /* Hover effect on SVG muscle groups - only on direct muscle groups */
 #bodyDiagramSVG g[id]:not(#Back-Muscles):not(#Front-Muscles):hover path {
   opacity: 0.6;
-  fill: var(--accent) !important;
-  stroke: var(--accent) !important;
+  fill: var(rgb(255, 162, 0)) !important;
+  stroke: var(rgb(255, 162, 0)) !important;
   stroke-width: 2;
 }
 
 /* Selected state for SVG muscle groups (added via JavaScript) */
 #bodyDiagramSVG g.selected path {
   opacity: 1 !important;
-  fill: var(--accent) !important;
-  stroke: var(--accent) !important;
+  fill: rgba(255, 162, 0) !important;
+  stroke: rgb(246, 241, 241) !important;
   stroke-width: 3 !important;
 }
 
@@ -575,8 +575,8 @@ select:hover {
 .adductors:checked~.body-diagram-container #bodyDiagramSVG #Adductors path {
   opacity: 1 !important;
   fill: var(--accent) !important;
-  stroke: var(--accent) !important;
-  stroke-width: 3 !important;
+  stroke: rgba(255, 162, 0, 0.5) !important;
+  stroke-width: 2 !important;
 }
 
 /* Label hover effect on SVG */
